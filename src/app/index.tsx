@@ -1,63 +1,96 @@
-import * as Device from 'expo-device';
-import { Platform, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+} from 'react-native';
 
-import { AnimatedIcon } from '@/components/animated-icon';
-import { HintRow } from '@/components/hint-row';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { WebBadge } from '@/components/web-badge';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
+export default function App() {
+  const [count, setCount] = useState(0);
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
-function getDevMenuHint() {
-  if (Platform.OS === 'web') {
-    return <ThemedText type="small">use browser devtools</ThemedText>;
-  }
-  if (Device.isDevice) {
-    return (
-      <ThemedText type="small">
-        shake device or press <ThemedText type="code">m</ThemedText> in terminal
-      </ThemedText>
-    );
-  }
-  const shortcut = Platform.OS === 'android' ? 'cmd+m (or ctrl+m)' : 'cmd+d';
+  const handleIncrement = () => {
+    setCount(count + 1);
+  };
+
+  const handleDecrement = () => {
+    if (count > 0) {
+      setCount(count - 1);
+    }
+  };
+
+  const handleReset = () => {
+    setCount(0);
+  };
+
+  const toggleTheme = () => {
+    setIsDarkMode(!isDarkMode);
+  };
+
   return (
-    <ThemedText type="small">
-      press <ThemedText type="code">{shortcut}</ThemedText>
-    </ThemedText>
-  );
-}
+    <View
+      style={[
+        styles.container,
+        {
+          backgroundColor: isDarkMode ? '#121212' : '#ffffff',
+        },
+      ]}
+    >
+      <Text
+        style={[
+          styles.title,
+          {
+            color: isDarkMode ? '#ffffff' : '#000000',
+          },
+        ]}
+      >
+        Digital Counter
+      </Text>
 
-export default function HomeScreen() {
-  return (
-    <ThemedView style={styles.container}>
-      <SafeAreaView style={styles.safeArea}>
-        <ThemedView style={styles.heroSection}>
-          <AnimatedIcon />
-          <ThemedText type="title" style={styles.title}>
-            Welcome to&nbsp;Expo
-          </ThemedText>
-        </ThemedView>
+      <Text
+        style={[
+          styles.counterText,
+          {
+            color: isDarkMode ? '#ffffff' : '#000000',
+          },
+        ]}
+      >
+        {count}
+      </Text>
 
-        <ThemedText type="code" style={styles.code}>
-          get started
-        </ThemedText>
+      <View style={styles.buttonRow}>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={handleIncrement}
+        >
+          <Text style={styles.buttonText}>Increment</Text>
+        </TouchableOpacity>
 
-        <ThemedView type="backgroundElement" style={styles.stepContainer}>
-          <HintRow
-            title="Try editing"
-            hint={<ThemedText type="code">src/app/index.tsx</ThemedText>}
-          />
-          <HintRow title="Dev tools" hint={getDevMenuHint()} />
-          <HintRow
-            title="Fresh start"
-            hint={<ThemedText type="code">npm run reset-project</ThemedText>}
-          />
-        </ThemedView>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={handleDecrement}
+        >
+          <Text style={styles.buttonText}>Decrement</Text>
+        </TouchableOpacity>
+      </View>
 
-        {Platform.OS === 'web' && <WebBadge />}
-      </SafeAreaView>
-    </ThemedView>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={handleReset}
+      >
+        <Text style={styles.buttonText}>Reset</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.themeButton}
+        onPress={toggleTheme}
+      >
+        <Text style={styles.buttonText}>
+          Toggle Theme
+        </Text>
+      </TouchableOpacity>
+    </View>
   );
 }
 
@@ -65,34 +98,47 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    flexDirection: 'row',
-  },
-  safeArea: {
-    flex: 1,
-    paddingHorizontal: Spacing.four,
     alignItems: 'center',
-    gap: Spacing.three,
-    paddingBottom: BottomTabInset + Spacing.three,
-    maxWidth: MaxContentWidth,
+    padding: 20,
   },
-  heroSection: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    gap: Spacing.four,
-  },
+
   title: {
-    textAlign: 'center',
+    fontSize: 32,
+    fontWeight: 'bold',
+    marginBottom: 20,
   },
-  code: {
-    textTransform: 'uppercase',
+
+  counterText: {
+    fontSize: 60,
+    fontWeight: 'bold',
+    marginBottom: 30,
   },
-  stepContainer: {
-    gap: Spacing.three,
-    alignSelf: 'stretch',
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.four,
-    borderRadius: Spacing.four,
+
+  buttonRow: {
+    flexDirection: 'row',
+    marginBottom: 20,
+  },
+
+  button: {
+    backgroundColor: '#3498db',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    marginHorizontal: 10,
+    marginVertical: 10,
+  },
+
+  themeButton: {
+    backgroundColor: '#2ecc71',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    marginTop: 10,
+  },
+
+  buttonText: {
+    color: '#ffffff',
+    fontSize: 18,
+    fontWeight: 'bold',
   },
 });
